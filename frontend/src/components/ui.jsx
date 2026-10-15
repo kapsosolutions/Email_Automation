@@ -156,6 +156,8 @@ export function Spinner({ size = 26, className = '' }) {
   );
 }
 
+export const CubeSpinner = Spinner;
+
 export function LoadingBlock({ label = 'Loading telemetry…' }) {
   return (
     <div className="flex flex-col items-center justify-center gap-3.5 py-12 px-6" aria-live="polite" aria-busy="true">

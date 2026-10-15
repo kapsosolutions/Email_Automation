@@ -439,7 +439,7 @@ export default function Send() {
               />
               {uploading ? (
                 <div className="mt-6 flex flex-col items-center justify-center rounded-[24px] border border-control-gray bg-studio-mist/70 py-8 px-6 text-center">
-                  <CubeSpinner size={44} />
+                  <Spinner size={36} />
                   <p className="mt-4 font-display text-[15px] font-semibold text-ink">
                     Parsing spreadsheet and validating syntax…
                   </p>
