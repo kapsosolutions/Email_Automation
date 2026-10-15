@@ -183,8 +183,20 @@ export async function sendMailViaApi({
   return { messageId: body.messageId, response: 'brevo-api', accepted: [to] };
 }
 
-/** SMTP first, HTTP API second. */
+/** SMTP first, HTTP API second (or HTTP API first if BREVO_API_KEY is set). */
 export async function sendMailResilient(message) {
+  // If BREVO_API_KEY is configured, prefer the HTTP API (HTTPS port 443) which works seamlessly on cloud hosts like Render
+  if (env.brevo.apiKey) {
+    try {
+      return await sendMailViaApi(message);
+    } catch (apiError) {
+      if (env.brevo.login && env.brevo.smtpKey) {
+        return await sendMail(message);
+      }
+      throw apiError;
+    }
+  }
+
   try {
     return await sendMail(message);
   } catch (smtpError) {
@@ -200,10 +212,17 @@ export async function sendMailResilient(message) {
 
 /**
  * Turn a raw relay rejection into something a human can act on.
- * These three account for nearly every first-run failure.
+ * These four account for nearly every first-run failure.
  */
 function explainRelayError(message = '') {
   const text = String(message);
+
+  if (/timeout|etimedout|esocket|connection timeout/i.test(text)) {
+    return {
+      reason: 'smtp-blocked-by-host',
+      hint: 'Your cloud host (Render, AWS, DigitalOcean, etc.) blocks outbound SMTP ports (587, 465, 25) on free/starter tiers to prevent spam. To fix this immediately, add BREVO_API_KEY to your Render Environment variables. The app will automatically send via Brevo’s HTTPS REST API (Port 443), which is 100% allowed on Render.',
+    };
+  }
 
   if (/unauthoriz|unrecognised ip|unrecognized ip|5\.7\.1/i.test(text)) {
     const ip = text.match(/(?:\d{1,3}\.){3}\d{1,3}|[0-9a-f]{0,4}(?::[0-9a-f]{0,4}){4,7}/i)?.[0];
@@ -238,10 +257,16 @@ function explainRelayError(message = '') {
  * though the addresses were at fault.
  */
 export async function preflight() {
+  // If BREVO_API_KEY is configured, check HTTP API first (bypasses blocked SMTP ports on Render/AWS)
+  if (env.brevo.apiKey) {
+    const account = await getBrevoAccount();
+    if (account) return { ok: true, via: 'api' };
+  }
+
   const smtp = await verifyConnection();
   if (smtp.ok) return { ok: true, via: 'smtp' };
 
-  // SMTP may be blocked by the host while the HTTP API still works.
+  // Fallback check if apiKey was set but getBrevoAccount timed out
   if (env.brevo.apiKey) {
     const account = await getBrevoAccount();
     if (account) return { ok: true, via: 'api', smtpError: smtp.error };
