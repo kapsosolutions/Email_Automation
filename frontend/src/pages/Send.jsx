@@ -744,6 +744,8 @@ export default function Send() {
                 subject={preview?.subject || draft.subject}
                 from={preview?.from || { name: draft.fromName, email: draft.fromEmail }}
                 to={preview?.usedContact?.email}
+                viewport="calc(100vh - 220px)"
+                height={560}
               />
               <div className="flex items-center justify-between gap-3 px-1">
                 <span className="font-text text-[12px] text-slate-400">

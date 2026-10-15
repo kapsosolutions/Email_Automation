@@ -274,7 +274,7 @@ export function EmailPreview({
   from,
   to,
   // `height` is the fallback document height before the frame reports its own.
-  height = 500,
+  height = 560,
   // `viewport` caps the visible panel. Accepts any CSS length, so callers can
   // pass a viewport-relative value to keep a sticky panel on screen.
   viewport,
@@ -304,24 +304,84 @@ export function EmailPreview({
     return () => observer.disconnect();
   }, []);
 
+  const handleIframeWheel = useCallback((e) => {
+    const shell = shellRef.current;
+    if (!shell) return;
+
+    if (e.cancelable) {
+      e.preventDefault();
+    }
+    e.stopPropagation();
+
+    shell.scrollTop += e.deltaY;
+  }, []);
+
   // Read the real document height so the whole email is shown, not a window of it.
   const measureDocument = useCallback(() => {
     try {
       const doc = frameRef.current?.contentDocument;
       if (!doc) return;
-      const measured = Math.max(
+
+      let measured = Math.max(
         doc.documentElement?.scrollHeight || 0,
         doc.body?.scrollHeight || 0,
+        doc.documentElement?.offsetHeight || 0,
+        doc.body?.offsetHeight || 0,
       );
-      if (measured > 0) setDocHeight(measured);
+
+      // Check last child bottom offset to ensure no footer content or padding is clipped
+      if (doc.body?.children?.length) {
+        const lastEl = doc.body.children[doc.body.children.length - 1];
+        const rect = lastEl.getBoundingClientRect();
+        if (rect && rect.bottom > measured) {
+          measured = Math.ceil(rect.bottom);
+        }
+      }
+
+      if (measured > 0) setDocHeight(measured + 36);
+
+      // Attach wheel listener to iframe document so rolling mouse wheel over email scrolls the preview
+      doc.removeEventListener('wheel', handleIframeWheel);
+      doc.addEventListener('wheel', handleIframeWheel, { passive: false });
+      if (doc.defaultView) {
+        doc.defaultView.removeEventListener('wheel', handleIframeWheel);
+        doc.defaultView.addEventListener('wheel', handleIframeWheel, { passive: false });
+      }
+
+      // Forward touch events
+      let touchStartY = 0;
+      doc.addEventListener(
+        'touchstart',
+        (e) => {
+          touchStartY = e.touches[0].clientY;
+        },
+        { passive: true },
+      );
+      doc.addEventListener(
+        'touchmove',
+        (e) => {
+          const touchY = e.touches[0].clientY;
+          const diff = touchStartY - touchY;
+          touchStartY = touchY;
+          if (shellRef.current) {
+            shellRef.current.scrollTop += diff;
+          }
+        },
+        { passive: true },
+      );
     } catch {
       // Blocked by the sandbox: fall back to the caller's height.
     }
-  }, []);
+  }, [handleIframeWheel]);
 
   useEffect(() => {
     // Images and webfonts settle after load, so re-measure a moment later.
-    const timers = [setTimeout(measureDocument, 80), setTimeout(measureDocument, 500)];
+    measureDocument();
+    const timers = [
+      setTimeout(measureDocument, 60),
+      setTimeout(measureDocument, 250),
+      setTimeout(measureDocument, 600),
+    ];
     return () => timers.forEach(clearTimeout);
   }, [html, device, measureDocument]);
 
@@ -336,7 +396,10 @@ export function EmailPreview({
   const scaledHeight = Math.max(1, Math.round(docHeight * scale));
 
   return (
-    <div className="overflow-hidden rounded-[28px] border border-control-gray bg-white">
+    <div
+      data-lenis-prevent
+      className="overflow-hidden rounded-[28px] border border-control-gray bg-white shadow-sm"
+    >
       <div className="border-b border-control-gray bg-studio-mist/70 px-5 py-3.5">
         <div className="mb-2.5 flex flex-wrap items-center gap-3">
           <div className="flex items-center gap-2">
@@ -398,11 +461,15 @@ export function EmailPreview({
           the scale factor rather than hidden behind a scrollbar. */}
       <div
         ref={shellRef}
-        className="overflow-y-auto overflow-x-auto bg-studio-mist/40 p-4"
-        style={{ maxHeight: viewport ?? height }}
+        data-lenis-prevent
+        className="overflow-y-auto overflow-x-hidden bg-studio-mist/40 p-4 custom-scrollbar"
+        style={{
+          maxHeight: viewport ?? height,
+          overscrollBehavior: 'contain',
+        }}
       >
         <div
-          className="relative mx-auto overflow-hidden rounded-[14px] border border-control-gray bg-white"
+          className="relative mx-auto overflow-hidden rounded-[14px] border border-control-gray bg-white shadow-sm"
           style={{ width: Math.round(baseWidth * scale), height: scaledHeight }}
         >
           <iframe
