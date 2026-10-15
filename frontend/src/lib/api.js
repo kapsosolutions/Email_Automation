@@ -21,7 +21,14 @@ function toError(error) {
 }
 
 client.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    if (typeof response.data === 'string' && response.data.trim().startsWith('<')) {
+      const wrapped = new Error('API server returned HTML instead of JSON. Ensure VITE_API_URL is configured to the Render backend API.');
+      wrapped.status = 502;
+      return Promise.reject(wrapped);
+    }
+    return response;
+  },
   (error) => Promise.reject(toError(error)),
 );
 

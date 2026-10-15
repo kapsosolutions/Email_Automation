@@ -80,6 +80,7 @@ export function ChartCard({ title, sub, action, children, height = 300, empty })
  * Delivery status donut with Meta colors.
  */
 export function DeliveryDonut({ data, total }) {
+  const safeData = Array.isArray(data) ? data : [];
   const palette = {
     sent: '#31a24c',
     failed: '#e41e3f',
@@ -94,7 +95,7 @@ export function DeliveryDonut({ data, total }) {
       <ResponsiveContainer width="100%" height="100%">
         <PieChart>
           <Pie
-            data={data}
+            data={safeData}
             dataKey="value"
             nameKey="name"
             innerRadius="62%"
@@ -103,7 +104,7 @@ export function DeliveryDonut({ data, total }) {
             stroke="#ffffff"
             strokeWidth={3}
           >
-            {data.map((entry) => (
+            {safeData.map((entry) => (
               <Cell key={entry.key} fill={palette[entry.key] || '#5d6c7b'} />
             ))}
           </Pie>
@@ -133,9 +134,10 @@ export function DeliveryDonut({ data, total }) {
 
 /** Daily send volume with Meta cobalt area and emerald line. */
 export function ActivityArea({ series }) {
+  const safeSeries = Array.isArray(series) ? series : [];
   return (
     <ResponsiveContainer width="100%" height="100%">
-      <ComposedChart data={series} margin={{ top: 8, right: 8, left: -18, bottom: 0 }}>
+      <ComposedChart data={safeSeries} margin={{ top: 8, right: 8, left: -18, bottom: 0 }}>
         <defs>
           <linearGradient id="metaSentFill" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor="#0064e0" stopOpacity={0.25} />
@@ -187,9 +189,10 @@ export function ActivityArea({ series }) {
 
 /** Grouped bars with rounded pill tops. */
 export function CampaignBars({ data }) {
+  const safeData = Array.isArray(data) ? data : [];
   return (
     <ResponsiveContainer width="100%" height="100%">
-      <BarChart data={data} margin={{ top: 8, right: 8, left: -18, bottom: 0 }} barGap={5}>
+      <BarChart data={safeData} margin={{ top: 8, right: 8, left: -18, bottom: 0 }} barGap={5}>
         <CartesianGrid stroke="#f1f4f7" strokeDasharray="3 3" vertical={false} />
         <XAxis
           dataKey="name"
@@ -221,12 +224,13 @@ export function CampaignBars({ data }) {
 
 /** Contacts per list - Meta cobalt and slate spectrum. */
 export function ListPie({ data }) {
+  const safeData = Array.isArray(data) ? data : [];
   const ramp = ['#0064e0', '#007df0', '#0091ff', '#385898', '#1876f2', '#5d6c7b'];
   return (
     <ResponsiveContainer width="100%" height="100%">
       <PieChart>
         <Pie
-          data={data}
+          data={safeData}
           dataKey="value"
           nameKey="name"
           outerRadius="82%"
@@ -237,7 +241,7 @@ export function ListPie({ data }) {
           label={({ percent }) => (percent > 0.06 ? `${Math.round(percent * 100)}%` : '')}
           labelLine={false}
         >
-          {data.map((entry, index) => (
+          {safeData.map((entry, index) => (
             <Cell key={entry.name} fill={ramp[index % ramp.length]} />
           ))}
         </Pie>
@@ -256,7 +260,8 @@ export function ListPie({ data }) {
 
 /** Single-metric radial gauge with Meta 100px rounded pills. */
 export function RateGauge({ value, label, tone = '#0064e0' }) {
-  const data = [{ name: label, value: Math.max(0, Math.min(100, value)), fill: tone }];
+  const numValue = Number.isFinite(Number(value)) ? Number(value) : 0;
+  const data = [{ name: label, value: Math.max(0, Math.min(100, numValue)), fill: tone }];
   return (
     <div className="relative h-full">
       <ResponsiveContainer width="100%" height="100%">
