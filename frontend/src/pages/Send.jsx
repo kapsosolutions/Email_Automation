@@ -11,12 +11,12 @@ import {
 import {
   Badge,
   Card,
-  CubeSpinner,
   ErrorNote,
   Field,
   ProgressBar,
   SectionHeading,
   Select,
+  SpeederModal,
   Spinner,
   Table,
   useAsync,
@@ -380,6 +380,10 @@ export default function Send() {
 
   return (
     <>
+      <SpeederModal
+        active={sending || testing}
+        message={sending ? 'Launching campaign at supersonic speed…' : 'Delivering test email via Brevo relay…'}
+      />
       <div className="bg-white border-b border-control-gray px-6 py-6 sm:px-8">
         <div className="mx-auto max-w-content flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>

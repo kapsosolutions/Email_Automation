@@ -63,18 +63,18 @@ export const CHART_COLORS = {
 };
 
 export const STATUS_TONE = {
-  sent: { label: 'Delivered', color: '#34c759' },
-  completed: { label: 'Completed', color: '#34c759' },
-  sending: { label: 'Sending', color: '#0071e3' },
-  queued: { label: 'Queued', color: '#0066cc' },
-  paused: { label: 'Paused', color: '#ff9500' },
-  failed: { label: 'Failed', color: '#ff3b30' },
-  bounced: { label: 'Bounced', color: '#ff3b30' },
-  cancelled: { label: 'Cancelled', color: '#707070' },
-  skipped: { label: 'Suppressed', color: '#86868b' },
-  draft: { label: 'Draft', color: '#707070' },
-  subscribed: { label: 'Subscribed', color: '#0071e3' },
-  unsubscribed: { label: 'Unsubscribed', color: '#ff9500' },
+  sent: { label: 'Delivered', color: '#00c269' },
+  completed: { label: 'Completed', color: '#00c269' },
+  sending: { label: 'Sending', color: '#00a859' },
+  queued: { label: 'Queued', color: '#3b82f6' },
+  paused: { label: 'Paused', color: '#f59e0b' },
+  failed: { label: 'Failed', color: '#ef4444' },
+  bounced: { label: 'Bounced', color: '#ef4444' },
+  cancelled: { label: 'Cancelled', color: '#64748b' },
+  skipped: { label: 'Suppressed', color: '#94a3b8' },
+  draft: { label: 'Draft', color: '#64748b' },
+  subscribed: { label: 'Subscribed', color: '#00c269' },
+  unsubscribed: { label: 'Unsubscribed', color: '#f59e0b' },
 };
 
 export const toneFor = (status) =>

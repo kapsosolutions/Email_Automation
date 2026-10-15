@@ -1,4 +1,6 @@
+import { useEffect } from 'react';
 import { Link, Navigate, Route, Routes } from 'react-router-dom';
+import Lenis from 'lenis';
 import Layout, { Band } from './components/Layout.jsx';
 import { EmptyState } from './components/ui.jsx';
 import CampaignDetail from './pages/CampaignDetail.jsx';
@@ -15,7 +17,7 @@ function NotFound() {
         title="Page not found"
         body="That route does not exist in this console."
         action={
-          <Link to="/" className="btn-buy-cta">
+          <Link to="/" className="btn-emerald">
             Back to dashboard
           </Link>
         }
@@ -25,6 +27,28 @@ function NotFound() {
 }
 
 export default function App() {
+  // Initialize Lenis smooth scroll
+  useEffect(() => {
+    const lenis = new Lenis({
+      duration: 1.1,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smoothWheel: true,
+      touchMultiplier: 1.5,
+    });
+
+    let animationFrameId;
+    function raf(time) {
+      lenis.raf(time);
+      animationFrameId = requestAnimationFrame(raf);
+    }
+    animationFrameId = requestAnimationFrame(raf);
+
+    return () => {
+      cancelAnimationFrame(animationFrameId);
+      lenis.destroy();
+    };
+  }, []);
+
   return (
     <Layout>
       <Routes>

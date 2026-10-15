@@ -61,25 +61,25 @@ export function Badge({ status, children, tone }) {
 
 /* ---------------------------------------------------------------- stat card */
 
-export function StatCard({ label, value, delta, hint, accent = '#0071e3', icon }) {
+export function StatCard({ label, value, delta, hint, accent = '#00c269', icon, className = '' }) {
   const positive = typeof delta === 'number' && delta >= 0;
   return (
-    <div className="rounded-[28px] border border-control-gray bg-white p-6 transition-colors duration-150 hover:border-hairline-silver">
+    <div className={`interactive-stat-card ${className}`}>
       <div className="flex items-center justify-between gap-4">
-        <p className="font-display text-[12px] font-semibold uppercase tracking-wider text-slate">
+        <p className="font-display text-[12px] font-semibold uppercase tracking-wider text-slate-500">
           {label}
         </p>
         {icon ? (
           <span
-            className="flex h-8 w-8 items-center justify-center rounded-full text-[13px] font-semibold"
-            style={{ backgroundColor: `${accent}14`, color: accent }}
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-[14px] font-semibold"
+            style={{ backgroundColor: `${accent}18`, color: accent }}
           >
             {icon}
           </span>
         ) : null}
       </div>
 
-      <p className="mt-3 font-display text-[32px] sm:text-[36px] font-semibold leading-none tracking-tight text-ink">
+      <p className="mt-3 font-display text-[30px] sm:text-[34px] font-bold leading-none tracking-tight text-slate-900">
         {typeof value === 'number' ? formatNumber(value) : value}
       </p>
 
@@ -88,14 +88,14 @@ export function StatCard({ label, value, delta, hint, accent = '#0071e3', icon }
           <span
             className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 font-display text-[11px] font-semibold"
             style={{
-              color: positive ? '#34c759' : '#ff3b30',
-              backgroundColor: positive ? '#34c75918' : '#ff3b3018',
+              color: positive ? '#00a859' : '#ef4444',
+              backgroundColor: positive ? '#e8f8f0' : '#fee2e2',
             }}
           >
             {positive ? '↑' : '↓'} {Math.abs(delta)}%
           </span>
         ) : null}
-        {hint ? <span className="font-text text-[12px] text-steel truncate">{hint}</span> : null}
+        {hint ? <span className="font-text text-[12px] text-slate-500 truncate">{hint}</span> : null}
       </div>
     </div>
   );
@@ -103,12 +103,12 @@ export function StatCard({ label, value, delta, hint, accent = '#0071e3', icon }
 
 /* ----------------------------------------------------------------- progress */
 
-export function ProgressBar({ value = 0, tone = '#0071e3', showLabel = true }) {
+export function ProgressBar({ value = 0, tone = '#00c269', showLabel = true }) {
   const clamped = Math.max(0, Math.min(100, Math.round(value)));
   return (
     <div className="flex items-center gap-3">
       <div
-        className="h-2 flex-1 overflow-hidden rounded-full bg-studio-mist border border-control-gray"
+        className="h-2 flex-1 overflow-hidden rounded-full bg-slate-100 border border-slate-200"
         role="progressbar"
         aria-valuenow={clamped}
         aria-valuemin={0}
@@ -120,7 +120,7 @@ export function ProgressBar({ value = 0, tone = '#0071e3', showLabel = true }) {
         />
       </div>
       {showLabel ? (
-        <span className="w-10 shrink-0 text-right font-display text-[12px] font-semibold text-slate">
+        <span className="w-10 shrink-0 text-right font-display text-[12px] font-semibold text-slate-600">
           {clamped}%
         </span>
       ) : null}
@@ -128,66 +128,69 @@ export function ProgressBar({ value = 0, tone = '#0071e3', showLabel = true }) {
   );
 }
 
-/* ------------------------------------------------------------------- 3D Cube Spinner */
+/* -------------------------------------------------------------
+   12-BLADE SPINNER (User Requested Spec)
+   ------------------------------------------------------------- */
 
-/**
- * 3D Cube Wireframe Spinner (User-specified geometry).
- */
-export function CubeSpinner({ size = 44, className = '' }) {
-  const scale = size / 44;
+export function Spinner({ size = 26, className = '' }) {
   return (
     <div
-      className={`spinner-container ${className}`}
-      style={{
-        width: size,
-        height: size,
-        display: 'inline-flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        position: 'relative',
-        flexShrink: 0,
-      }}
+      className={`spinner ${className}`}
+      style={{ fontSize: `${size}px` }}
       role="status"
       aria-label="Loading"
     >
-      <div
-        style={{
-          width: 44,
-          height: 44,
-          transform: `scale(${scale})`,
-          transformOrigin: 'center center',
-          transformStyle: 'preserve-3d',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          flexShrink: 0,
-        }}
-      >
-        <div className="spinner">
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-        </div>
-      </div>
+      <div className="spinner-blade"></div>
+      <div className="spinner-blade"></div>
+      <div className="spinner-blade"></div>
+      <div className="spinner-blade"></div>
+      <div className="spinner-blade"></div>
+      <div className="spinner-blade"></div>
+      <div className="spinner-blade"></div>
+      <div className="spinner-blade"></div>
+      <div className="spinner-blade"></div>
+      <div className="spinner-blade"></div>
+      <div className="spinner-blade"></div>
+      <div className="spinner-blade"></div>
     </div>
   );
 }
 
-/**
- * Primary Spinner adapter: renders the 3D rotating cube.
- */
-export function Spinner({ size = 28, className = '' }) {
-  return <CubeSpinner size={size} className={className} />;
+export function LoadingBlock({ label = 'Loading telemetry…' }) {
+  return (
+    <div className="flex flex-col items-center justify-center gap-3.5 py-12 px-6" aria-live="polite" aria-busy="true">
+      <Spinner size={28} />
+      <span className="font-text text-[13px] text-slate-500">{label}</span>
+    </div>
+  );
 }
 
-export function LoadingBlock({ label = 'Loading', rows = 3 }) {
+/* -------------------------------------------------------------
+   SUPERSONIC SPEEDER LOADER MODAL (User Requested Spec)
+   ------------------------------------------------------------- */
+
+export function SpeederModal({ active, message = 'Dispatching campaign at supersonic speed…' }) {
+  if (!active) return null;
   return (
-    <div className="flex flex-col items-center justify-center gap-4 py-12 px-6" aria-live="polite" aria-busy="true">
-      <CubeSpinner size={44} />
-      <span className="font-text text-[13px] text-slate">{label}</span>
+    <div className="speeder-overlay">
+      <div className="speeder-box">
+        <div className="loader">
+          <span><span></span><span></span><span></span><span></span></span>
+          <div className="base">
+            <span></span>
+            <div className="face"></div>
+          </div>
+        </div>
+        <div className="longfazers">
+          <span></span><span></span><span></span><span></span>
+        </div>
+      </div>
+      <div className="mt-8 text-center px-4">
+        <p className="font-display text-[17px] font-semibold text-white tracking-wide">{message}</p>
+        <p className="mt-1 font-text text-[13px] text-emerald-400">
+          Personalizing messages & routing through Brevo SMTP relay…
+        </p>
+      </div>
     </div>
   );
 }

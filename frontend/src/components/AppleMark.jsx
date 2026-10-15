@@ -1,51 +1,57 @@
 /**
- * Apple-inspired minimalist Brand Mark & Lockup.
- * Features an editorial monochrome glyph with SF Pro typography.
+ * WATI-inspired Brand Mark & Lockup.
+ * Features signature emerald green glyph (#00C269) with modern typography.
  */
 export function AppleMark({ size = 36, className = '' }) {
   return (
     <span
-      className={`inline-flex items-center justify-center rounded-[10px] bg-ink text-white ${className}`}
+      className={`inline-flex items-center justify-center rounded-[10px] bg-gradient-to-br from-[#00C269] to-[#00A859] text-white shadow-sm ${className}`}
       style={{ width: size, height: size }}
       aria-hidden="true"
     >
       <svg
         viewBox="0 0 24 24"
-        width={Math.round(size * 0.55)}
-        height={Math.round(size * 0.55)}
+        width={Math.round(size * 0.6)}
+        height={Math.round(size * 0.6)}
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
         <path
-          d="M3 7.5C3 6.11929 4.11929 5 5.5 5H18.5C19.8807 5 21 6.11929 21 7.5V16.5C21 17.8807 19.8807 19 18.5 19H5.5C4.11929 19 3 17.8807 3 16.5V7.5Z"
+          d="M3 6.5C3 5.39543 3.89543 4.5 5 4.5H19C20.1046 4.5 21 5.39543 21 6.5V17.5C21 18.6046 20.1046 19.5 19 19.5H5C3.89543 19.5 3 18.6046 3 17.5V6.5Z"
           stroke="currentColor"
-          strokeWidth="1.75"
+          strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
         />
         <path
-          d="M3.5 7L12 12.5L20.5 7"
+          d="M3 7L12 13L21 7"
           stroke="currentColor"
-          strokeWidth="1.75"
+          strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
         />
+        <circle cx="17.5" cy="15.5" r="2" fill="white" />
       </svg>
     </span>
   );
 }
 
-/** Nav brand lockup: Apple-style glyph + SF Pro text */
+/** Nav brand lockup: WATI style glyph + clean text */
 export function BrandLockup() {
   return (
-    <div className="flex items-center gap-3">
-      <AppleMark size={32} />
+    <div className="flex items-center gap-2.5">
+      <AppleMark size={34} />
       <div className="flex flex-col">
-        <span className="font-display text-[15px] font-semibold leading-tight tracking-tight text-ink">
-          Mail Automation
-        </span>
-        <span className="font-text text-[11px] font-normal leading-tight text-slate">
-          Production Console
+        <div className="flex items-center gap-1.5">
+          <span className="font-display text-[16px] font-bold leading-tight tracking-tight text-slate-900">
+            WATI
+          </span>
+          <span className="inline-flex items-center rounded bg-[#e8f8f0] px-1.5 py-0.5 text-[10px] font-semibold text-[#00a859]">
+            Mail
+          </span>
+        </div>
+        <span className="font-text text-[11px] font-medium leading-tight text-slate-400">
+          Campaign Automation
         </span>
       </div>
     </div>
