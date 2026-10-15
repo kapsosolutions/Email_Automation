@@ -457,224 +457,109 @@ export default function Send() {
             </Card>
 
             {uploadResult ? (
-              <>
-                <div className="rounded-[28px] border border-control-gray bg-white p-6 shadow-sm flex flex-wrap items-center justify-between gap-6">
-                  <div className="flex flex-wrap items-center gap-6 sm:gap-10">
+              <Card className="overflow-hidden p-0 border border-control-gray rounded-[28px] bg-white w-full">
+                <div className="flex flex-wrap items-center justify-between gap-4 border-b border-control-gray px-7 py-5 bg-white">
+                  <div className="flex items-center gap-3">
+                    <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#107c41]/10 text-[#107c41]">
+                      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                        <polyline points="14 2 14 8 20 8" />
+                        <line x1="8" y1="13" x2="16" y2="13" />
+                        <line x1="8" y1="17" x2="16" y2="17" />
+                        <line x1="10" y1="9" x2="8" y2="9" />
+                      </svg>
+                    </span>
                     <div>
-                      <p className="font-display text-[11px] font-bold uppercase tracking-wider text-steel">Audience</p>
-                      <p className="font-display text-[16px] font-semibold text-ink truncate max-w-[280px]">
-                        {uploadResult.list?.name || 'Spreadsheet uploaded'}
-                      </p>
-                    </div>
-                    <div className="h-8 w-px bg-control-gray hidden sm:block" />
-                    <div>
-                      <p className="font-display text-[11px] font-bold uppercase tracking-wider text-steel">Recipients Ready</p>
-                      <p className="font-display text-[18px] font-bold text-pricing-blue">
-                        {formatNumber(recipientCount)}
-                      </p>
-                    </div>
-                    <div className="h-8 w-px bg-control-gray hidden sm:block" />
-                    <div>
-                      <p className="font-display text-[11px] font-bold uppercase tracking-wider text-steel">Columns Mapped</p>
-                      <p className="font-display text-[18px] font-bold text-ink">
-                        {columns.length}
+                      <h3 className="font-display text-[17px] font-semibold text-ink">
+                        Recipient Preview
+                      </h3>
+                      <p className="font-text text-[13px] text-slate">
+                        Showing first {uploadResult.preview.length} of {formatNumber(uploadResult.summary.valid)} valid records ({uploadResult.summary.columns?.length || 0} columns detected)
                       </p>
                     </div>
                   </div>
-                  <button
-                    type="button"
-                    className="btn-pricing px-8"
-                    disabled={!canLeaveAudience}
-                    onClick={() => setStep(1)}
-                  >
-                    Continue to Message →
-                  </button>
+                  <div className="flex items-center gap-3">
+                    <span className="rounded-full border border-control-gray bg-studio-mist px-3 py-1 font-display text-[12px] font-medium text-slate">
+                      {uploadResult.summary.columns?.length || 0} Columns
+                    </span>
+                    <span className="rounded-full border border-[#107c41]/20 bg-[#107c41]/10 px-3 py-1 font-display text-[12px] font-semibold text-[#107c41]">
+                      Excel Grid
+                    </span>
+                    <button
+                      type="button"
+                      className="btn-emerald btn-sm shadow-sm font-medium px-5 py-2 flex items-center gap-1.5"
+                      disabled={!canLeaveAudience}
+                      onClick={() => setStep(1)}
+                    >
+                      Continue to Message →
+                    </button>
+                  </div>
                 </div>
 
-                <Card className="p-8 w-full">
-                  <div className="flex flex-wrap items-end justify-between gap-4">
-                    <div>
-                      <h3 className="font-display text-[22px] font-medium text-ink-deep">
-                        {uploadResult.list.name}
-                      </h3>
-                      <p className="mt-1 font-text text-[14px] text-steel">
-                        {formatNumber(uploadResult.summary.totalRows)} rows parsed from{' '}
-                        {uploadResult.list.sourceFileName}
-                      </p>
-                    </div>
-                    <Badge tone="#31a24c">
-                      {formatNumber(uploadResult.summary.readyToSend)} ready to send
-                    </Badge>
-                  </div>
-
-                  <div className="mt-6 grid gap-3 sm:grid-cols-4">
-                    {[
-                      { label: 'Valid', value: uploadResult.summary.valid, tone: '#31a24c' },
-                      { label: 'Invalid', value: uploadResult.summary.invalid, tone: '#e41e3f' },
-                      {
-                        label: 'Duplicates',
-                        value: uploadResult.summary.duplicates,
-                        tone: '#f7b928',
-                      },
-                      {
-                        label: 'Opted out',
-                        value: uploadResult.summary.suppressed,
-                        tone: '#5d6c7b',
-                      },
-                    ].map((cell) => (
-                      <div key={cell.label} className="rounded-[20px] border border-hairline-soft bg-surface-soft/40 p-4">
-                        <p className="font-display text-[11px] font-bold uppercase tracking-wider text-steel">
-                          {cell.label}
-                        </p>
-                        <p
-                          className="mt-1 font-display text-[24px] font-bold leading-none"
-                          style={{ color: cell.tone }}
-                        >
-                          {formatNumber(cell.value)}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="mt-6 grid gap-5 sm:grid-cols-2">
-                    <Field
-                      label="Email Column"
-                      hint="Detected automatically. Change to re-parse the uploaded file."
-                      htmlFor="email-column"
-                    >
-                      <Select
-                        id="email-column"
-                        value={emailColumnOverride}
-                        disabled={uploading || !file}
-                        onChange={(event) => {
-                          setEmailColumnOverride(event.target.value);
-                          if (file) runUpload(file, event.target.value);
-                        }}
-                      >
-                        {(uploadResult.summary.columns || []).map((column) => (
-                          <option key={column} value={column}>
-                            {column}
-                          </option>
-                        ))}
-                      </Select>
-                    </Field>
-                    <Field label="Tokens available in message">
-                      <div className="flex flex-wrap gap-2 pt-1">
-                        {(uploadResult.summary.columns || []).map((column) => (
-                          <span key={column} className="chip">{`{${column}}`}</span>
-                        ))}
-                      </div>
-                    </Field>
-                  </div>
-                </Card>
-
-                <Card className="overflow-hidden p-0 border border-control-gray rounded-[28px] bg-white w-full">
-                  <div className="flex flex-wrap items-center justify-between gap-4 border-b border-control-gray px-7 py-5 bg-white">
-                    <div className="flex items-center gap-3">
-                      <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#107c41]/10 text-[#107c41]">
-                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                          <polyline points="14 2 14 8 20 8" />
-                          <line x1="8" y1="13" x2="16" y2="13" />
-                          <line x1="8" y1="17" x2="16" y2="17" />
-                          <line x1="10" y1="9" x2="8" y2="9" />
-                        </svg>
-                      </span>
-                      <div>
-                        <h3 className="font-display text-[17px] font-semibold text-ink">
-                          Recipient Preview
-                        </h3>
-                        <p className="font-text text-[13px] text-slate">
-                          Showing first {uploadResult.preview.length} of {formatNumber(uploadResult.summary.valid)} valid records
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="rounded-full border border-control-gray bg-studio-mist px-3 py-1 font-display text-[12px] font-medium text-slate">
-                        {uploadResult.summary.columns?.length || 0} Columns
-                      </span>
-                      <span className="rounded-full border border-[#107c41]/20 bg-[#107c41]/10 px-3 py-1 font-display text-[12px] font-semibold text-[#107c41]">
-                        Excel Grid
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="overflow-x-auto">
-                    <table className="w-full border-collapse text-left">
-                      <thead>
-                        <tr className="bg-studio-mist border-b border-control-gray">
-                          <th className="w-14 border-r border-control-gray px-3 py-2.5 text-center font-mono text-[11px] font-bold uppercase tracking-wider text-steel select-none bg-studio-mist">
-                            #
-                          </th>
-                          {(uploadResult.summary.columns || []).map((col, idx) => {
-                            const isEmailCol = col === uploadResult.summary.emailColumn;
-                            const colLetter = idx < 26 ? String.fromCharCode(65 + idx) : `${String.fromCharCode(65 + Math.floor(idx / 26) - 1)}${String.fromCharCode(65 + (idx % 26))}`;
-                            return (
-                              <th
-                                key={col}
-                                className="border-r border-control-gray px-4 py-2.5 font-display text-[12px] font-semibold text-ink whitespace-nowrap bg-studio-mist"
-                              >
-                                <div className="flex items-center gap-2">
-                                  <span className="font-mono text-[10px] text-steel select-none">
-                                    {colLetter}
+                <div className="overflow-x-auto">
+                  <table className="w-full border-collapse text-left">
+                    <thead>
+                      <tr className="bg-studio-mist border-b border-control-gray">
+                        <th className="w-14 border-r border-control-gray px-3 py-2.5 text-center font-mono text-[11px] font-bold uppercase tracking-wider text-steel select-none bg-studio-mist">
+                          #
+                        </th>
+                        {(uploadResult.summary.columns || []).map((col, idx) => {
+                          const isEmailCol = col === uploadResult.summary.emailColumn;
+                          const colLetter = idx < 26 ? String.fromCharCode(65 + idx) : `${String.fromCharCode(65 + Math.floor(idx / 26) - 1)}${String.fromCharCode(65 + (idx % 26))}`;
+                          return (
+                            <th
+                              key={col}
+                              className="border-r border-control-gray px-4 py-2.5 font-display text-[12px] font-semibold text-ink whitespace-nowrap bg-studio-mist"
+                            >
+                              <div className="flex items-center gap-2">
+                                <span className="font-mono text-[10px] text-steel select-none">
+                                  {colLetter}
+                                </span>
+                                <span>{col}</span>
+                                {isEmailCol ? (
+                                  <span className="rounded bg-pricing-blue/10 px-1.5 py-0.5 font-display text-[10px] font-semibold text-pricing-blue">
+                                    Email
                                   </span>
-                                  <span>{col}</span>
-                                  {isEmailCol ? (
-                                    <span className="rounded bg-pricing-blue/10 px-1.5 py-0.5 font-display text-[10px] font-semibold text-pricing-blue">
-                                      Email
-                                    </span>
-                                  ) : null}
-                                </div>
-                              </th>
+                                ) : null}
+                              </div>
+                            </th>
+                          );
+                        })}
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-control-gray">
+                      {uploadResult.preview.map((row, rowIndex) => (
+                        <tr
+                          key={row.email || rowIndex}
+                          className="hover:bg-studio-mist/60 transition-colors"
+                        >
+                          <td className="border-r border-control-gray bg-studio-mist/30 px-3 py-2.5 text-center font-mono text-[11.5px] font-medium text-steel select-none">
+                            {row.rowNumber ?? rowIndex + 1}
+                          </td>
+                          {(uploadResult.summary.columns || []).map((col) => {
+                            const isEmailCol = col === uploadResult.summary.emailColumn;
+                            const val =
+                              row.data?.[col] !== undefined && row.data?.[col] !== null && String(row.data[col]).trim() !== ''
+                                ? String(row.data[col])
+                                : (isEmailCol ? row.email : '—');
+                            return (
+                              <td
+                                key={col}
+                                className={`border-r border-control-gray px-4 py-2.5 font-text text-[13px] whitespace-nowrap max-w-[280px] truncate ${
+                                  isEmailCol ? 'font-medium text-ink' : 'text-slate'
+                                }`}
+                                title={val}
+                              >
+                                {val}
+                              </td>
                             );
                           })}
                         </tr>
-                      </thead>
-                      <tbody className="divide-y divide-control-gray">
-                        {uploadResult.preview.map((row, rowIndex) => (
-                          <tr
-                            key={row.email || rowIndex}
-                            className="hover:bg-studio-mist/60 transition-colors"
-                          >
-                            <td className="border-r border-control-gray bg-studio-mist/30 px-3 py-2.5 text-center font-mono text-[11.5px] font-medium text-steel select-none">
-                              {row.rowNumber ?? rowIndex + 1}
-                            </td>
-                            {(uploadResult.summary.columns || []).map((col) => {
-                              const isEmailCol = col === uploadResult.summary.emailColumn;
-                              const val =
-                                row.data?.[col] !== undefined && row.data?.[col] !== null && String(row.data[col]).trim() !== ''
-                                  ? String(row.data[col])
-                                  : (isEmailCol ? row.email : '—');
-                              return (
-                                <td
-                                  key={col}
-                                  className={`border-r border-control-gray px-4 py-2.5 font-text text-[13px] whitespace-nowrap max-w-[280px] truncate ${
-                                    isEmailCol ? 'font-medium text-ink' : 'text-slate'
-                                  }`}
-                                  title={val}
-                                >
-                                  {val}
-                                </td>
-                              );
-                            })}
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </Card>
-
-                <div className="flex justify-end pt-2 pb-6">
-                  <button
-                    type="button"
-                    className="btn-pricing px-8"
-                    disabled={!canLeaveAudience}
-                    onClick={() => setStep(1)}
-                  >
-                    Continue to Message →
-                  </button>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
-              </>
+              </Card>
             ) : null}
           </div>
         ) : null}
