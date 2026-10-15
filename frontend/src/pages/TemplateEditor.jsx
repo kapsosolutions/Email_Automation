@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { Band, Hero } from '../components/Layout.jsx';
+import { Band } from '../components/Layout.jsx';
 import {
   DeliverabilityScore,
   EmailPreview,
@@ -267,29 +267,50 @@ export default function TemplateEditor() {
 
   return (
     <>
-      <Hero
-        eyebrow={isEdit ? 'Template Editor' : 'New Template'}
-        title={draft.name || (isEdit ? 'Edit Template' : 'Create a Mail Design')}
-        lead="Compose with dynamic tokens, preview against audience columns, and run deliverability checks before saving."
-        cta={
-          <button
-            type="button"
-            className="btn-buy-cta font-medium"
-            onClick={save}
-            disabled={!canSave || saving}
-          >
-            {saving ? <Spinner size={16} /> : null}
-            {isEdit ? 'Save Changes' : 'Save Template'}
-          </button>
-        }
-        secondary={
-          <Link to="/templates" className="btn-secondary font-medium">
-            Back to templates
-          </Link>
-        }
-      />
-
       <Band tight>
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 pb-5">
+          <div>
+            <div className="flex items-center gap-2">
+              <Link
+                to="/templates"
+                className="inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wider text-slate-500 hover:text-slate-800 transition-colors"
+              >
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="19" y1="12" x2="5" y2="12" />
+                  <polyline points="12 19 5 12 12 5" />
+                </svg>
+                Templates
+              </Link>
+              <span className="text-slate-300">/</span>
+              <span className="inline-flex items-center rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-semibold text-[#00a859] border border-emerald-200">
+                {isEdit ? 'Editor' : 'New Template'}
+              </span>
+            </div>
+            <h1 className="mt-1 font-display text-[24px] font-bold tracking-tight text-slate-900">
+              {draft.name || (isEdit ? 'Edit Template' : 'Create a Mail Design')}
+            </h1>
+          </div>
+          <div className="flex items-center gap-2.5">
+            <Link to="/templates" className="btn-secondary btn-sm shadow-sm">
+              Back to templates
+            </Link>
+            <button
+              type="button"
+              className="btn-emerald btn-sm shadow-sm font-medium"
+              onClick={save}
+              disabled={!canSave || saving}
+            >
+              {saving ? <Spinner size={14} /> : (
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+                  <polyline points="17 21 17 13 7 13 7 21" />
+                  <polyline points="7 3 7 8 15 8" />
+                </svg>
+              )}
+              {isEdit ? 'Save Changes' : 'Save Template'}
+            </button>
+          </div>
+        </div>
         {loading ? (
           <Card className="p-8">
             <Spinner size={32} className="mx-auto block" />

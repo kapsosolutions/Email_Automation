@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Band, Hero } from '../components/Layout.jsx';
+import { Band } from '../components/Layout.jsx';
 import {
   Badge,
   Card,
@@ -41,23 +41,34 @@ export default function Campaigns() {
 
   return (
     <>
-      <Hero
-        eyebrow="Campaign Telemetry"
-        title="Campaigns"
-        lead="Inspect delivery rates, engagement metrics, and transmission history across all dispatched campaigns."
-        cta={
-          <Link to="/send" className="btn-buy-cta font-medium">
-            Start a send
-          </Link>
-        }
-        secondary={
-          <Link to="/templates" className="btn-secondary font-medium">
-            Manage templates
-          </Link>
-        }
-      />
-
       <Band tight>
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 pb-5">
+          <div>
+            <div className="flex items-center gap-2">
+              <h1 className="font-display text-[26px] font-bold tracking-tight text-slate-900">
+                Campaigns
+              </h1>
+              <span className="inline-flex items-center rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-semibold text-[#00a859] border border-emerald-200">
+                Telemetry
+              </span>
+            </div>
+            <p className="mt-1 font-text text-[13.5px] text-slate-500">
+              Inspect delivery rates, engagement metrics, and transmission history across all dispatched campaigns.
+            </p>
+          </div>
+          <div className="flex items-center gap-2.5">
+            <Link to="/send" className="btn-emerald btn-sm shadow-sm">
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="22" y1="2" x2="11" y2="13" />
+                <polygon points="22 2 15 22 11 13 2 9 22 2" />
+              </svg>
+              Start a Send
+            </Link>
+            <Link to="/templates" className="btn-secondary btn-sm shadow-sm">
+              Manage Templates
+            </Link>
+          </div>
+        </div>
         <SectionHeading
           sub="Chronological dispatch log. Select any campaign to inspect delivery states."
           action={
@@ -82,7 +93,7 @@ export default function Campaigns() {
             </div>
           }
         >
-          Campaign Telemetry
+          Dispatch History
         </SectionHeading>
 
         <ErrorNote error={campaigns.error} onRetry={campaigns.refetch} />

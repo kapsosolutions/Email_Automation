@@ -238,7 +238,12 @@ export function DeliverabilityScore({ analysis, loading }) {
           ))}
         </ul>
       ) : (
-        <p className="mt-3 font-text text-[12.5px] text-emerald-600 font-medium">✓ No spam triggers or formatting risks detected.</p>
+        <p className="mt-3 flex items-center gap-1.5 font-text text-[12.5px] text-[#00a859] font-medium">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
+          No spam triggers or formatting risks detected.
+        </p>
       )}
     </div>
   );
@@ -451,7 +456,13 @@ export function StepRail({ steps, current, onSelect }) {
                       : 'bg-studio-mist text-slate'
                 }`}
               >
-                {state === 'done' ? '✓' : index + 1}
+                {state === 'done' ? (
+                  <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                ) : (
+                  index + 1
+                )}
               </span>
               <span className="text-[12.5px] font-medium">{step.label}</span>
             </button>

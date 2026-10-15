@@ -106,7 +106,12 @@ export default function Dashboard() {
                 delta={s?.trend?.changePercent}
                 hint="vs previous 30 days"
                 accent="#00c269"
-                icon="✉"
+                icon={
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                    <polyline points="22,6 12,13 2,6" />
+                  </svg>
+                }
               />
               <StatCard
                 label="Audience Contacts"
@@ -115,14 +120,26 @@ export default function Dashboard() {
                   s?.contacts?.unsubscribed ?? 0,
                 )} opted out`}
                 accent="#00c269"
-                icon="👥"
+                icon={
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                    <circle cx="9" cy="7" r="4" />
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                  </svg>
+                }
               />
               <StatCard
                 label="Open Rate"
                 value={`${s?.rates?.open ?? 0}%`}
                 hint={`${formatNumber(s?.engagement?.uniqueOpens ?? 0)} unique opens`}
                 accent="#00c269"
-                icon="📬"
+                icon={
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                    <circle cx="12" cy="12" r="3" />
+                  </svg>
+                }
               />
               <StatCard
                 label="Campaigns Executed"
@@ -133,196 +150,64 @@ export default function Dashboard() {
                     : `${formatNumber(s?.templates ?? 0)} templates configured`
                 }
                 accent={s?.campaigns?.active ? '#00c269' : '#64748b'}
-                icon="⚡"
+                icon={
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                  </svg>
+                }
               />
               <StatCard
                 label="Delivery Rate"
                 value={`${s?.rates?.delivery ?? 0}%`}
                 hint={`${formatNumber(s?.emails?.failed ?? 0)} failed deliveries`}
                 accent="#00c269"
-                icon="✓"
+                icon={
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                    <polyline points="22 4 12 14.01 9 11.01" />
+                  </svg>
+                }
               />
               <StatCard
                 label="Click-Through Rate"
                 value={`${s?.rates?.click ?? 0}%`}
                 hint={`${formatNumber(s?.engagement?.uniqueClicks ?? 0)} unique link clicks`}
                 accent="#00c269"
-                icon="🔗"
+                icon={
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+                  </svg>
+                }
               />
               <StatCard
                 label="Queued For Dispatch"
                 value={s?.emails?.queued ?? 0}
                 hint={s?.emails?.queued ? 'Actively dispatching' : 'Queue idle'}
                 accent="#3b82f6"
-                icon="⏳"
+                icon={
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="10" />
+                    <polyline points="12 6 12 12 16 14" />
+                  </svg>
+                }
               />
               <StatCard
                 label="Unsubscribe Rate"
                 value={`${s?.rates?.unsubscribe ?? 0}%`}
                 hint={`${formatNumber(s?.engagement?.unsubscribes ?? 0)} total opt-outs`}
                 accent="#f59e0b"
-                icon="✕"
+                icon={
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="15" y1="9" x2="9" y2="15" />
+                    <line x1="9" y1="9" x2="15" y2="15" />
+                  </svg>
+                }
               />
             </div>
           </>
         )}
-      </Band>
-
-      {/* -------------------------------------------------------------
-          WATI Custom Parameters / Contact Attributes Showcase
-          (Replicating the right-side parameter card from user screenshot)
-          ------------------------------------------------------------- */}
-      <Band tight>
-        <div className="grid gap-6 lg:grid-cols-3">
-          {/* Contact Custom Parameters Card */}
-          <Card className="p-6 border border-slate-200">
-            <div className="flex items-center justify-between pb-4 border-b border-slate-100">
-              <div className="flex items-center gap-2">
-                <span className="flex h-7 w-7 items-center justify-center rounded-md bg-[#e8f8f0] text-[#00c269]">
-                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
-                  </svg>
-                </span>
-                <h3 className="font-display text-[15px] font-bold text-slate-800">
-                  Contact Custom Parameters
-                </h3>
-              </div>
-              <span className="flex h-6 w-6 items-center justify-center rounded bg-[#00c269] text-white text-[12px]">
-                ✎
-              </span>
-            </div>
-
-            <div className="mt-4 space-y-2">
-              <div className="flex items-center justify-between rounded-lg border border-slate-200 bg-white px-3 py-2 text-[13px]">
-                <span className="font-medium text-slate-600">Name</span>
-                <span className="font-semibold text-slate-800">Alex Morgan</span>
-              </div>
-              <div className="flex items-center justify-between rounded-lg border border-slate-200 bg-white px-3 py-2 text-[13px]">
-                <span className="font-medium text-slate-600">Language</span>
-                <span className="font-semibold text-slate-800">English</span>
-              </div>
-              <div className="flex items-center justify-between rounded-lg border border-slate-200 bg-white px-3 py-2 text-[13px]">
-                <span className="font-medium text-slate-600">Country</span>
-                <span className="font-semibold text-slate-800">India / USA</span>
-              </div>
-
-              {/* Highlighted WATI Attribute with Green Border and Badge */}
-              <div className="relative rounded-lg border-2 border-[#00c269] bg-[#f0fdf4] p-3 space-y-2 transition-all shadow-sm">
-                <div className="flex items-center justify-between text-[13px]">
-                  <span className="font-mono text-[12px] font-bold text-[#00a859]">last_cart_total_value</span>
-                  <span className="font-bold text-slate-900">₹500</span>
-                </div>
-                <div className="flex items-center justify-between text-[13px]">
-                  <span className="font-mono text-[12px] font-bold text-[#00a859]">last_cart_items</span>
-                  <span className="font-medium text-slate-800 text-[12px] truncate max-w-[150px]">Clarks Men's Boat...</span>
-                </div>
-                <div className="absolute -right-3 -top-3 inline-flex items-center gap-1 rounded-full bg-[#00c269] px-2.5 py-0.5 text-[10px] font-bold text-white shadow-sm">
-                  <span>← Contact Attribute</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-4 pt-3 border-t border-slate-100">
-              <div className="flex items-center justify-between text-[12px] text-slate-500 mb-2">
-                <span>Personalization Tags:</span>
-              </div>
-              <div className="flex flex-wrap gap-1.5">
-                <span className="rounded-md bg-slate-100 px-2 py-1 text-[11px] font-medium text-slate-700">General Enquiry ×</span>
-                <span className="rounded-md bg-slate-100 px-2 py-1 text-[11px] font-medium text-slate-700">Shipping Enquiry ×</span>
-              </div>
-            </div>
-          </Card>
-
-          {/* Brevo Relay Diagnostic Card */}
-          <Card className="p-6 border border-slate-200 flex flex-col justify-between">
-            <div>
-              <div className="flex items-center justify-between pb-4 border-b border-slate-100">
-                <div className="flex items-center gap-2">
-                  <span className="flex h-7 w-7 items-center justify-center rounded-md bg-[#e8f8f0] text-[#00c269]">
-                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-                    </svg>
-                  </span>
-                  <h3 className="font-display text-[15px] font-bold text-slate-800">
-                    Relay Health & Throttle
-                  </h3>
-                </div>
-                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-bold text-[#00a859]">
-                  <span className="h-1.5 w-1.5 rounded-full bg-[#00c269]" />
-                  Active
-                </span>
-              </div>
-
-              <div className="mt-4 space-y-3 font-text text-[13px]">
-                <div className="flex items-center justify-between py-1 border-b border-slate-50">
-                  <span className="text-slate-500">SMTP Host</span>
-                  <span className="font-mono text-slate-800 font-semibold">smtp-relay.brevo.com:587</span>
-                </div>
-                <div className="flex items-center justify-between py-1 border-b border-slate-50">
-                  <span className="text-slate-500">Sending Throttle</span>
-                  <span className="font-semibold text-slate-800">60 emails/min (Jitter: 400ms)</span>
-                </div>
-                <div className="flex items-center justify-between py-1 border-b border-slate-50">
-                  <span className="text-slate-500">Concurrency</span>
-                  <span className="font-semibold text-slate-800">3 parallel workers</span>
-                </div>
-                <div className="flex items-center justify-between py-1">
-                  <span className="text-slate-500">Authenticated Sender</span>
-                  <span className="font-mono text-[12px] text-[#00a859] font-bold">zzzverseofficial@gmail.com</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-4 rounded-lg bg-emerald-50 p-3 text-[12px] text-emerald-800 flex items-center gap-2">
-              <span>🛡️</span>
-              <span>All outgoing emails include One-Click Unsubscribe headers and DKIM alignment.</span>
-            </div>
-          </Card>
-
-          {/* Quick Dispatch Card */}
-          <Card className="p-6 border border-slate-200 flex flex-col justify-between">
-            <div>
-              <div className="flex items-center justify-between pb-4 border-b border-slate-100">
-                <div className="flex items-center gap-2">
-                  <span className="flex h-7 w-7 items-center justify-center rounded-md bg-[#e8f8f0] text-[#00c269]">
-                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2">
-                      <polygon points="5 3 19 12 5 21 5 3" />
-                    </svg>
-                  </span>
-                  <h3 className="font-display text-[15px] font-bold text-slate-800">
-                    Quick Send Action
-                  </h3>
-                </div>
-                <span className="text-[12px] font-semibold text-slate-400">Step 1 of 3</span>
-              </div>
-
-              <p className="mt-3 font-text text-[13px] text-slate-600 leading-relaxed">
-                Upload contacts via CSV/XLSX, choose your personalized email template, and let the Brevo relay stream messages.
-              </p>
-
-              <div className="mt-4 space-y-2 text-[12.5px] text-slate-700">
-                <div className="flex items-center gap-2">
-                  <span className="text-[#00c269] font-bold">✓</span>
-                  <span>Automatic CSV & XLSX header detection</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-[#00c269] font-bold">✓</span>
-                  <span>Loose placeholder matching (<code className="text-[#00a859]">{'{name}'}</code>, <code className="text-[#00a859]">{'{company}'}</code>)</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-[#00c269] font-bold">✓</span>
-                  <span>Supersonic dispatch animations & real-time telemetry</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-5">
-              <Link to="/send" className="btn-emerald w-full justify-center shadow-sm">
-                Open Send Console →
-              </Link>
-            </div>
-          </Card>
-        </div>
       </Band>
 
       {/* ----------------------------------------------------------- charts */}
