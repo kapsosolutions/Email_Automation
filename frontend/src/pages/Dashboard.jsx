@@ -10,19 +10,16 @@ import {
   RateGauge,
 } from '../components/charts.jsx';
 import {
-  Badge,
   Card,
   ErrorNote,
   LoadingBlock,
-  ProgressBar,
   SectionHeading,
   StatCard,
-  Table,
   useAsync,
   useInterval,
 } from '../components/ui.jsx';
 import { api } from '../lib/api.js';
-import { formatNumber, formatRelative, toneFor } from '../lib/format.js';
+import { formatNumber } from '../lib/format.js';
 
 const RANGE_OPTIONS = [7, 14, 30];
 
@@ -32,7 +29,6 @@ export default function Dashboard() {
   const stats = useAsync(() => api.dashboard.stats(), []);
   const breakdown = useAsync(() => api.dashboard.breakdown(), []);
   const performance = useAsync(() => api.dashboard.campaignPerformance(6), []);
-  const recent = useAsync(() => api.dashboard.recent(), []);
   const series = useAsync(() => api.dashboard.timeseries(days), [days]);
 
   const hasActive = Boolean(stats.data?.campaigns?.active);
@@ -40,9 +36,7 @@ export default function Dashboard() {
   // Follow live campaigns without hammering the API when nothing is running.
   const refreshLive = useCallback(() => {
     stats.refetch();
-    recent.refetch();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [stats.refetch, recent.refetch]);
+  }, [stats.refetch]);
 
   useInterval(refreshLive, 6000, hasActive);
 
@@ -298,116 +292,6 @@ export default function Dashboard() {
               </div>
             </Card>
           ))}
-        </div>
-      </Band>
-
-      {/* --------------------------------------------------- recent tables */}
-      <Band tight>
-        <div className="grid gap-6 lg:grid-cols-2">
-          <Card className="p-6 border border-slate-200">
-            <div className="flex items-center justify-between gap-4 border-b border-slate-100 pb-4">
-              <div>
-                <h3 className="font-display text-[17px] font-bold text-slate-900">Recent Campaigns</h3>
-                <p className="font-text text-[13px] text-slate-500">Latest executed broadcasts</p>
-              </div>
-              <Link to="/campaigns" className="font-display text-[13px] font-semibold text-[#00a859] hover:underline">
-                View all →
-              </Link>
-            </div>
-            {recent.loading && !recent.data ? (
-              <LoadingBlock />
-            ) : (
-              <div className="pt-2">
-                <Table
-                  head={['Campaign', 'Status', 'Progress']}
-                  empty={!recent.data?.campaigns?.length ? 'No campaigns executed yet.' : null}
-                >
-                  {(recent.data?.campaigns || []).map((campaign) => (
-                    <tr key={campaign._id} className="hover:bg-slate-50/80 transition-colors">
-                      <td className="table-cell">
-                        <Link
-                          to={`/campaigns/${campaign._id}`}
-                          className="font-display text-[14px] font-semibold text-slate-900 hover:text-[#00c269] transition-colors"
-                        >
-                          {campaign.name}
-                        </Link>
-                        <p className="font-text text-[12px] text-slate-500 mt-0.5">
-                          {campaign.list?.name || 'list removed'} ·{' '}
-                          {formatRelative(campaign.createdAt)}
-                        </p>
-                      </td>
-                      <td className="table-cell">
-                        <Badge status={campaign.status} />
-                      </td>
-                      <td className="table-cell w-40">
-                        <ProgressBar
-                          value={campaign.progress}
-                          tone={toneFor(campaign.status).color}
-                        />
-                        <p className="mt-1 font-text text-[11px] text-slate-500">
-                          {formatNumber(campaign.stats?.sent || 0)} /{' '}
-                          {formatNumber(campaign.stats?.total || 0)}
-                        </p>
-                      </td>
-                    </tr>
-                  ))}
-                </Table>
-              </div>
-            )}
-          </Card>
-
-          <Card className="p-6 border border-slate-200">
-            <div className="flex items-center justify-between gap-4 border-b border-slate-100 pb-4">
-              <div>
-                <h3 className="font-display text-[17px] font-bold text-slate-900">Live Activity Stream</h3>
-                <p className="font-text text-[13px] text-slate-500">Real-time message transmissions</p>
-              </div>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-0.5 font-display text-[11px] font-semibold text-[#00a859] border border-emerald-200">
-                <span className={`h-2 w-2 rounded-full ${hasActive ? 'bg-[#00c269] animate-pulse' : 'bg-slate-400'}`} />
-                {hasActive ? 'Live Streaming' : 'Queue Idle'}
-              </span>
-            </div>
-            {recent.loading && !recent.data ? (
-              <LoadingBlock />
-            ) : (
-              <div className="pt-2">
-                <Table
-                  head={['Recipient', 'Status', 'Timestamp']}
-                  empty={!recent.data?.activity?.length ? 'No transmission logs recorded yet.' : null}
-                >
-                  {(recent.data?.activity || []).map((log) => (
-                    <tr key={log._id} className="hover:bg-slate-50/80 transition-colors">
-                      <td className="table-cell">
-                        <span className="font-text text-[13.5px] font-medium text-slate-900">{log.email}</span>
-                        <p className="truncate font-text text-[12px] text-slate-500 mt-0.5 max-w-[200px]">
-                          {log.campaign?.name || log.subject || '—'}
-                        </p>
-                      </td>
-                      <td className="table-cell">
-                        <Badge status={log.status} />
-                        {log.error ? (
-                          <p
-                            className="mt-1 max-w-[180px] truncate font-text text-[11px] text-red-500"
-                            title={log.error}
-                          >
-                            {log.error}
-                          </p>
-                        ) : log.opens ? (
-                          <p className="mt-1 font-text text-[11px] text-slate-500">
-                            {log.opens} open{log.opens > 1 ? 's' : ''}
-                            {log.clicks ? `, ${log.clicks} click${log.clicks > 1 ? 's' : ''}` : ''}
-                          </p>
-                        ) : null}
-                      </td>
-                      <td className="table-cell whitespace-nowrap font-text text-[12px] text-slate-500">
-                        {formatRelative(log.sentAt || log.updatedAt)}
-                      </td>
-                    </tr>
-                  ))}
-                </Table>
-              </div>
-            )}
-          </Card>
         </div>
       </Band>
     </>
