@@ -5,7 +5,6 @@ import {
   DeliverabilityScore,
   EmailPreview,
   FileDrop,
-  PlaceholderMap,
   StepRail,
 } from '../components/compose.jsx';
 import {
@@ -87,6 +86,10 @@ export default function Send() {
   );
 
   const columns = selectedList?.columns || uploadResult?.summary?.columns || [];
+  const availableTokens = useMemo(() => {
+    if (columns && columns.length > 0) return columns;
+    return ['name', 'email', 'company', 'first_name'];
+  }, [columns]);
   const recipientCount =
     selectedList?.counts?.subscribed ?? uploadResult?.summary?.readyToSend ?? 0;
 
@@ -207,8 +210,25 @@ export default function Send() {
     }
   };
 
-  const insertToken = (column) => {
+  const insertToken = (column, target = 'body') => {
     const token = `{${column}}`;
+    if (target === 'subject') {
+      const input = document.getElementById('subject');
+      if (!input) {
+        setDraft((current) => ({ ...current, subject: `${current.subject} ${token}`.trim() }));
+        return;
+      }
+      const start = input.selectionStart ?? draft.subject.length;
+      const end = input.selectionEnd ?? start;
+      const next = `${draft.subject.slice(0, start)}${token}${draft.subject.slice(end)}`;
+      setDraft((current) => ({ ...current, subject: next }));
+      requestAnimationFrame(() => {
+        input.focus();
+        input.setSelectionRange(start + token.length, start + token.length);
+      });
+      return;
+    }
+
     const textarea = bodyRef.current;
     if (!textarea) {
       setDraft((current) => ({ ...current, html: `${current.html}${token}` }));
@@ -566,8 +586,9 @@ export default function Send() {
 
         {/* ------------------------------------------------- step 2: message */}
         {step === 1 ? (
-          <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
-            <div className="space-y-8">
+          <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
+            {/* Left Column: Form Fields & Heuristics (Scrollable) */}
+            <div className="space-y-6">
               <Card className="p-8">
                 <SectionHeading sub="Compose your email with inline {tokens} or choose from existing templates.">
                   Message Content
@@ -599,15 +620,34 @@ export default function Send() {
                     />
                   </Field>
 
-                  <Field label="Subject Line" required htmlFor="subject">
+                  <div>
+                    <div className="flex flex-wrap items-center justify-between gap-2 mb-1.5">
+                      <label htmlFor="subject" className="font-display text-[13px] font-semibold text-slate-800">
+                        Subject Line <span className="text-red-500">*</span>
+                      </label>
+                      <div className="flex items-center gap-1 text-[11px] text-slate-500">
+                        <span>Insert:</span>
+                        {availableTokens.slice(0, 3).map((col) => (
+                          <button
+                            key={col}
+                            type="button"
+                            onClick={() => insertToken(col, 'subject')}
+                            className="font-mono text-[11px] font-medium text-[#00a859] hover:underline px-1.5 py-0.5 rounded bg-emerald-50 border border-emerald-100"
+                            title={`Insert {${col}} into Subject`}
+                          >
+                            {`{${col}}`}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
                     <input
                       id="subject"
-                      className="field"
+                      className="field w-full"
                       placeholder="Hi {name}, look forward to what's next"
                       value={draft.subject}
                       onChange={(event) => setDraft({ ...draft, subject: event.target.value })}
                     />
-                  </Field>
+                  </div>
 
                   <Field
                     label="Preview Preheader"
@@ -623,74 +663,99 @@ export default function Send() {
                     />
                   </Field>
 
-                  <Field
-                    label="Email HTML Body"
-                    required
-                    hint="Insert tokens like {first_name}. Use fallbacks like {name|there} for missing rows."
-                    htmlFor="body"
-                  >
+                  <div>
+                    <div className="flex flex-wrap items-center justify-between gap-2 mb-1.5">
+                      <label htmlFor="body" className="font-display text-[13px] font-semibold text-slate-800">
+                        Email HTML Body <span className="text-red-500">*</span>
+                      </label>
+                      <span className="font-text text-[12px] text-slate-400">
+                        Click a token below to insert at cursor
+                      </span>
+                    </div>
+
+                    {/* Integrated Quick Insert Token Buttons Toolbar */}
+                    <div className="mb-2.5 flex flex-wrap items-center gap-1.5 rounded-xl border border-slate-200 bg-slate-50/80 p-2.5 shadow-xs">
+                      <span className="flex items-center gap-1 font-display text-[11px] font-bold uppercase tracking-wider text-slate-500 mr-1 pl-1">
+                        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                          <polyline points="16 18 22 12 16 6" />
+                          <polyline points="8 6 2 12 8 18" />
+                        </svg>
+                        Tokens:
+                      </span>
+                      {availableTokens.map((col) => (
+                        <button
+                          key={col}
+                          type="button"
+                          onClick={() => insertToken(col, 'body')}
+                          className="inline-flex items-center gap-1 rounded-lg border border-emerald-200 bg-white px-2.5 py-1 font-mono text-[12px] font-semibold text-[#00a859] shadow-xs hover:border-[#00c269] hover:bg-emerald-50 active:scale-95 transition-all cursor-pointer"
+                          title={`Insert {${col}} into body`}
+                        >
+                          <span className="text-emerald-500 font-bold">+</span>
+                          {`{${col}}`}
+                        </button>
+                      ))}
+                    </div>
+
                     <textarea
                       id="body"
                       ref={bodyRef}
                       rows={14}
-                      className="field-mono"
+                      className="field-mono w-full"
                       placeholder={'<p>Hi {name},</p>\n<p>We are delighted to share our latest updates with {company}.</p>'}
                       value={draft.html}
                       onChange={(event) => setDraft({ ...draft, html: event.target.value })}
                     />
-                  </Field>
-                </div>
-              </Card>
-
-              <Card className="p-8">
-                <div className="flex items-center justify-between gap-4">
-                  <div>
-                    <h3 className="font-display text-[18px] font-medium text-ink-deep">Placeholder Token Resolution</h3>
-                    <p className="mt-0.5 font-text text-[13px] text-steel">
-                      Tokens are resolved fuzzy against spreadsheet columns (e.g. {'{first_name}'} matches “First Name”).
+                    <p className="mt-1.5 font-text text-[12px] text-slate-400">
+                      Insert tokens like <code className="text-slate-600 font-mono text-[11.5px] bg-slate-100 px-1 py-0.5 rounded">{'{name}'}</code>. Use fallbacks like <code className="text-slate-600 font-mono text-[11.5px] bg-slate-100 px-1 py-0.5 rounded">{'{name|there}'}</code> for missing values.
                     </p>
                   </div>
-                  {checking ? <Spinner size={18} /> : null}
-                </div>
-                <div className="mt-5">
-                  <PlaceholderMap
-                    mapping={mapping}
-                    columns={columns}
-                    onInsert={insertToken}
-                    defaults={defaults}
-                    onDefault={(key, value) => setDefaults({ ...defaults, [key]: value })}
-                  />
                 </div>
               </Card>
-            </div>
 
-            <div className="space-y-8">
-              <EmailPreview
-                html={preview?.html}
-                subject={preview?.subject || draft.subject}
-                from={preview?.from || { name: draft.fromName, email: draft.fromEmail }}
-                to={preview?.usedContact?.email}
-              />
-
+              {/* Deliverability & Spam Heuristics */}
               <Card className="p-8">
-                <h3 className="font-display text-[18px] font-medium text-ink-deep">Deliverability & Spam Heuristics</h3>
-                <p className="mb-4 mt-0.5 font-text text-[13px] text-steel">
+                <h3 className="font-display text-[18px] font-semibold text-slate-900">Deliverability & Spam Heuristics</h3>
+                <p className="mb-4 mt-0.5 font-text text-[13px] text-slate-500">
                   Syntactic inspection of content, links, images, and trigger words.
                 </p>
                 <DeliverabilityScore analysis={analysis} loading={checking} />
               </Card>
 
+              {/* Navigation Actions */}
               <div className="flex flex-wrap gap-4 pt-2">
                 <button type="button" className="btn-secondary" onClick={() => setStep(0)}>
                   ← Back to Audience
                 </button>
                 <button
                   type="button"
-                  className="btn-primary flex-1"
+                  className="btn-emerald font-medium px-6 py-2.5 shadow-sm flex-1"
                   disabled={!canLeaveMessage}
                   onClick={() => setStep(2)}
                 >
                   Review and Configure →
+                </button>
+              </div>
+            </div>
+
+            {/* Right Column: Sticky Email Client Preview (Pinned on Scroll) */}
+            <div className="space-y-4 lg:sticky lg:top-6 self-start">
+              <EmailPreview
+                html={preview?.html}
+                subject={preview?.subject || draft.subject}
+                from={preview?.from || { name: draft.fromName, email: draft.fromEmail }}
+                to={preview?.usedContact?.email}
+              />
+              <div className="flex items-center justify-between gap-3 px-1">
+                <span className="font-text text-[12px] text-slate-400">
+                  Live email client simulation
+                </span>
+                <button
+                  type="button"
+                  className="btn-emerald btn-sm shadow-sm font-medium px-4 py-1.5"
+                  disabled={!canLeaveMessage}
+                  onClick={() => setStep(2)}
+                >
+                  Next Step →
                 </button>
               </div>
             </div>
