@@ -1,0 +1,335 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Apple Color Tokens */
+    --color-gallery-white: #ffffff;
+    --color-studio-mist: #f5f5f7;
+    --color-paper-frost: #fafafc;
+    --color-hairline-silver: #d6d6d6;
+    --color-control-gray: #e6e6e8;
+    --color-ink: #1d1d1f;
+    --color-slate: #707070;
+    --color-steel: #86868b;
+    --color-apple-blue: #0066cc;
+    --color-pricing-blue: #0071e3;
+    --color-launch-orange: #b64400;
+
+    /* Theme Aliases */
+    --meta-primary: #0071e3;
+    --meta-primary-deep: #0066cc;
+    --meta-primary-soft: #409cff;
+    --meta-on-primary: #ffffff;
+    --meta-ink-button: #1d1d1f;
+    --meta-canvas: #f5f5f7;
+    --meta-surface-soft: #f5f5f7;
+    --meta-ink-deep: #1d1d1f;
+    --meta-ink: #1d1d1f;
+    --meta-charcoal: #333336;
+    --meta-slate: #707070;
+    --meta-steel: #86868b;
+    --meta-stone: #86868b;
+    --meta-hairline: #d6d6d6;
+    --meta-hairline-soft: #e6e6e8;
+    --meta-success: #34c759;
+    --meta-warning: #ff9500;
+    --meta-critical: #ff3b30;
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
+    background-color: #f5f5f7;
+  }
+
+  body {
+    background-color: #f5f5f7;
+    color: #1d1d1f;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    margin: 0;
+    letter-spacing: -0.015em;
+  }
+
+  /* Apple Focus Ring */
+  *:focus-visible {
+    outline: 2px solid var(--color-apple-blue);
+    outline-offset: 2px;
+    border-radius: 9999px;
+  }
+
+  ::selection {
+    background: rgba(0, 113, 227, 0.18);
+    color: #0071e3;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    color: #1d1d1f;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', sans-serif;
+    letter-spacing: -0.022em;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  /* Quiet Apple Scrollbars */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #d6d6d6;
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #86868b;
+  }
+}
+
+@layer components {
+  /* Apple 9999px Pill Button System */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 font-display text-[13px] font-medium
+      transition-all duration-150 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40;
+    border-radius: 9999px;
+    height: 40px;
+    padding: 0 20px;
+    white-space: nowrap;
+    letter-spacing: -0.012em;
+  }
+
+  /* Pricing Blue Pill (Conversion moments) */
+  .btn-pricing,
+  .btn-buy-cta,
+  .btn-cobalt {
+    @apply btn text-white;
+    background-color: var(--color-pricing-blue);
+  }
+  .btn-pricing:hover,
+  .btn-buy-cta:hover,
+  .btn-cobalt:hover {
+    background-color: #0077ed;
+  }
+
+  /* Outlined Explore Pill */
+  .btn-secondary,
+  .btn-explore {
+    @apply btn bg-white text-ink border border-hairline;
+  }
+  .btn-secondary:hover,
+  .btn-explore:hover {
+    background-color: #f5f5f7;
+    border-color: #86868b;
+  }
+
+  /* Dark Primary Button */
+  .btn-primary {
+    @apply btn bg-ink text-white;
+  }
+  .btn-primary:hover {
+    background-color: #333336;
+  }
+
+  /* Apple Ghost Link Button */
+  .btn-ghost {
+    @apply btn bg-transparent text-ink border border-transparent;
+  }
+  .btn-ghost:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+  }
+
+  .btn-sm {
+    height: 32px;
+    padding: 0 14px;
+    font-size: 12px;
+  }
+
+  .btn-xs {
+    height: 26px;
+    padding: 0 10px;
+    font-size: 11px;
+  }
+
+  /* Apple Pill Tabs */
+  .btn-pill-tab {
+    @apply inline-flex items-center justify-center gap-1.5 rounded-full border border-transparent bg-white px-3.5 py-1.5 font-display text-[12px] font-medium text-slate transition-all duration-150 hover:text-ink;
+    border-radius: 9999px;
+  }
+
+  .btn-pill-tab-active {
+    @apply btn-pill-tab bg-ink text-white border-transparent hover:text-white;
+  }
+
+  /* Apple Circular Button */
+  .button-icon-circular {
+    @apply flex h-9 w-9 items-center justify-center rounded-full border border-hairline-soft bg-white text-ink transition-colors hover:bg-studio-mist;
+  }
+
+  /* Apple 28px Card Geometry (Flat & Shadowless) */
+  .card {
+    background-color: #ffffff;
+    border-radius: 28px;
+    border: 1px solid var(--color-control-gray);
+    box-shadow: none;
+    transition: border-color 0.15s ease;
+  }
+
+  .card-hoverable {
+    @apply card;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+  }
+  .card-hoverable:hover {
+    border-color: var(--color-hairline-silver);
+  }
+
+  .card-product-feature {
+    background-color: #ffffff;
+    border-radius: 28px;
+    border: 1px solid var(--color-control-gray);
+    padding: 32px;
+  }
+
+  .card-promo-strip {
+    background-color: var(--color-ink);
+    border-radius: 28px;
+    color: #ffffff;
+    padding: 36px;
+  }
+
+  .card-summary {
+    background-color: #ffffff;
+    border-radius: 24px;
+    border: 1px solid var(--color-control-gray);
+    padding: 24px;
+  }
+
+  /* Apple Form Controls */
+  .field-label {
+    @apply mb-2 block font-display text-[12px] font-semibold text-slate;
+    letter-spacing: -0.01em;
+  }
+
+  .field {
+    @apply w-full rounded-[14px] border border-hairline bg-white px-3.5 py-2.5 font-text text-[14px]
+      text-ink transition-all duration-150 placeholder:text-steel
+      hover:border-steel focus:border-pricing-blue focus:ring-2 focus:ring-pricing-blue/15 focus:outline-none;
+    min-height: 42px;
+  }
+
+  .field-mono {
+    @apply field font-mono text-[13px] leading-relaxed;
+  }
+
+  /* Apple Search Pill */
+  .search-pill {
+    @apply inline-flex items-center gap-2 rounded-full border border-hairline-soft bg-studio-mist px-4 py-2 font-text text-[13px] text-ink placeholder:text-steel transition-all duration-150 focus-within:border-pricing-blue focus-within:bg-white;
+    border-radius: 980px;
+    height: 38px;
+  }
+
+  /* Apple Chips & Badges */
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-hairline-soft bg-white px-3 py-1
+      font-display text-[12px] font-medium text-slate transition-all duration-150 hover:border-steel hover:text-ink;
+    border-radius: 9999px;
+  }
+
+  .chip-active {
+    @apply chip border-ink bg-ink text-white hover:text-white;
+  }
+
+  .chip-cobalt {
+    @apply chip border-pricing-blue bg-pricing-blue text-white hover:text-white;
+  }
+
+  /* Tables */
+  .table-head {
+    @apply border-b border-hairline-soft px-5 py-3 text-left font-display text-[12px] font-semibold text-slate;
+    letter-spacing: -0.01em;
+  }
+
+  .table-cell {
+    @apply border-b border-hairline-soft px-5 py-3.5 font-text text-[13.5px] text-ink;
+  }
+}
+
+@layer utilities {
+  .hairline-divider {
+    border-top: 1px solid var(--color-control-gray);
+  }
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* -------------------------------------------------------------
+   3D CUBE SPINNER (User Requested Spec)
+   ------------------------------------------------------------- */
+.spinner-container {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 800px;
+}
+
+.spinner {
+  width: 44px;
+  height: 44px;
+  animation: spinner-y0fdc1 2s infinite ease;
+  transform-style: preserve-3d;
+  position: relative;
+}
+
+.spinner > div {
+  background-color: rgba(0, 77, 255, 0.15);
+  height: 100%;
+  position: absolute;
+  width: 100%;
+  border: 2px solid #0071e3;
+  backdrop-filter: blur(2px);
+  border-radius: 4px;
+}
+
+.spinner div:nth-of-type(1) {
+  transform: translateZ(-22px) rotateY(180deg);
+}
+
+.spinner div:nth-of-type(2) {
+  transform: rotateY(-270deg) translateX(50%);
+  transform-origin: top right;
+}
+
+.spinner div:nth-of-type(3) {
+  transform: rotateY(270deg) translateX(-50%);
+  transform-origin: center left;
+}
+
+.spinner div:nth-of-type(4) {
+  transform: rotateX(90deg) translateY(-50%);
+  transform-origin: top center;
+}
+
+.spinner div:nth-of-type(5) {
+  transform: rotateX(-90deg) translateY(50%);
+  transform-origin: bottom center;
+}
+
+.spinner div:nth-of-type(6) {
+  transform: translateZ(22px);
+}
+
+@keyframes spinner-y0fdc1 {
+  0% {
+    transform: rotate(45deg) rotateX(-25deg) rotateY(25deg);
+  }
+  50% {
+    transform: rotate(45deg) rotateX(-385deg) rotateY(25deg);
+  }
+  100% {
+    transform: rotate(45deg) rotateX(-385deg) rotateY(385deg);
+  }
+}

@@ -1,0 +1,10 @@
+Name,Email Address,Company,Plan,City
+Alex Morgan,alex.morgan@example.com,Northwind,Pro,Lisbon
+Priya Raman,priya.raman@example.com,Acme Labs,Starter,Bengaluru
+Sam Okafor,sam.okafor@example.com,Helio,Pro,Lagos
+Mei Tanaka,mei.tanaka@example.com,Kitsune,Enterprise,Osaka
+Jonas Weber,jonas.weber@example.com,Blauhaus,Starter,Berlin
+Duplicate Row,alex.morgan@example.com,Northwind,Pro,Lisbon
+Broken Row,not-an-email,Nowhere,,
+Rosa Alvarez,rosa.alvarez@example.com,Sol,Pro,Madrid
+Perivi,perivihari8@gmail.com,Kapso Solutions,Pro,India

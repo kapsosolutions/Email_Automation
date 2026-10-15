@@ -1,0 +1,17 @@
+node_modules/
+dist/
+build/
+coverage/
+
+# secrets - never commit
+.env
+.env.*
+!.env.example
+
+# runtime
+backend/uploads/
+*.log
+npm-debug.log*
+.DS_Store
+Thumbs.db
+.vite/
